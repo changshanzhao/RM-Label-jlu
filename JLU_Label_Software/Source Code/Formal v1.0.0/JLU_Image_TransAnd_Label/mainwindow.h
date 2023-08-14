@@ -7,7 +7,12 @@
 #include<QMessageBox>
 #include<QDebug>
 #include<QList>
-
+#include <opencv2/core/utility.hpp>
+#include <opencv2/tracking.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
+#include <Windows.h>
 #include <labelclass.h>
 #include <manuallylabel.h>
 #include <labelquerydialog.h>
@@ -46,6 +51,9 @@ public:
     void initBasicQuickShot();
     /*显示图片*/
     void imgShow(unsigned int visitIndex);
+    void cvShow(unsigned int visitIndex);
+    /*opencv鼠标响应事件*/
+    static void my_mouse_callback(int event, int x, int y, int flags, void* param);
 
     /*MenuBar Sections*/
     /*Import the picture*/
@@ -79,6 +87,10 @@ public:
     void viewWhoMakeIt();
     /*我去，危*/
     void findShitsAndTellAuthors();
+    /*QImage转Mat*/
+    cv::Mat ImageToMat(QImage &image);
+    /*Mat转QImage*/
+    QImage MatToImage(cv::Mat &m);
 private slots:
 
 
@@ -108,6 +120,8 @@ private slots:
     void showSetSeperatorMainWindow();
 
     void getSetSeperatorFromSSMW();
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow                                  *ui;
     /* 存储当前的图片 */
@@ -131,12 +145,18 @@ private:
     SetSeperatorMainWindow*                         setSeperatorWindows;
     /* 要不要忽视另一些添加失败的图片 */
     bool                                            isIgnoreFailed;
+    /* box索引 */
+    int                                             box_array_max_index = -1;
     /* 默认的导入分割符 */
     QString                                         defLabelsSeperator;
     /* 当前的导入分割符 */
     QString                                         curLabelsSeperator;
     /* 写方法 */
     QStringList                                     writingMethod;
+    bool                                            isauto;
+    cv::Ptr<cv::Tracker>                            tracker;
+    std::string                                     winName;
+    std::vector<cv::Rect>                           box_array;
 };
 #endif // MAINWINDOW_H
 
